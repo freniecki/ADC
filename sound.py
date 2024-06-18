@@ -1,5 +1,8 @@
 import wave
 import pyaudio
+import numpy as np
+
+from numpy import asanyarray
 
 CHUNK = 1024
 
@@ -14,6 +17,8 @@ def play(file_name):
 
         while len(data := wf.readframes(CHUNK)):
             stream.write(data)
+
+        # print(snr(stream))
 
         stream.close()
 
@@ -40,6 +45,8 @@ def record(rate, format_size, length):
             data = stream.read(CHUNK)
             frames.append(data)
 
+        # print(snr(stream))
+
         stream.stop_stream()
         stream.close()
 
@@ -54,3 +61,10 @@ def record(rate, format_size, length):
         wb.close()
 
         print('file written')
+
+
+def snr(data):
+    data = asanyarray(data)
+    s = data.mean(0)
+    n = data.std()
+    return abs(20 * np.log10(abs(np.where(n == 0, 0, s/n))))
