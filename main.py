@@ -13,7 +13,7 @@ def play_music(self):
 
 
 def record_sound(self):
-    record(self.frequency, self.bit_depth,15)
+    record(self.frequency, self.bit_depth, 3)
 
 
 class MainWindow(QMainWindow):
