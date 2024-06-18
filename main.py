@@ -3,14 +3,26 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QSlider, QLineEdi
     QPushButton, QFileDialog, QVBoxLayout, QHBoxLayout, QWidget
 from PyQt5.QtCore import Qt
 
-from sound import play
+from sound import play, record
+
+
+def play_music(self):
+    play(self.file_path)
+
+
+def record_sound(self):
+    record(self.frequency, self.bit_depth,15)
 
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Audio Recorder")
+        self.setWindowTitle("Analogue-Digital Operator")
+
+        self.frequency = 40000
+        self.bit_depth = 16
+        self.file_path = ""
 
         # Górna część okna
         upper_widget = QWidget()
@@ -22,7 +34,7 @@ class MainWindow(QMainWindow):
         self.freq_slider = QSlider(Qt.Horizontal)
         self.freq_slider.setMinimum(20000)
         self.freq_slider.setMaximum(60000)
-        self.freq_slider.setValue(40000)
+        self.freq_slider.setValue(self.frequency)
         self.freq_slider.valueChanged.connect(self.update_freq_text)
         self.freq_text = QLineEdit(str(self.freq_slider.value()))
         self.freq_text.setFixedWidth(100)
@@ -53,26 +65,32 @@ class MainWindow(QMainWindow):
         self.choose_file_button = QPushButton('Choose File')
         self.choose_file_button.clicked.connect(self.open_file_dialog)
 
+        self.file_display = QLineEdit()
+        self.file_display.setReadOnly(True)
+
+        upper_layout.addWidget(self.file_display)
         upper_layout.addWidget(self.choose_file_button)
 
         upper_widget.setLayout(upper_layout)
 
-        # Dolna część okna
+        # ------------------------------------------
+
         lower_widget = QWidget()
         lower_layout = QHBoxLayout()
 
-        # Przyciski do nagrywania i odtwarzania
         self.record_button = QPushButton('Record')
+        self.record_button.clicked.connect(lambda: record_sound(self))
+
         self.play_button = QPushButton('Play')
+        self.record_button.clicked.connect(lambda: play_music(self))
 
         lower_layout.addWidget(self.record_button)
-        # self.record_button.clicked.connect(record())
         lower_layout.addWidget(self.play_button)
-        # self.record_button.clicked.connect(play())
 
         lower_widget.setLayout(lower_layout)
 
-        # Ustawienie głównego layoutu
+        # --------------------------------------------
+
         main_layout = QVBoxLayout()
         main_layout.addWidget(upper_widget)
         main_layout.addWidget(lower_widget)
@@ -83,6 +101,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(container)
 
     def update_freq_text(self):
+        self.frequency = self.freq_slider.value()
         self.freq_text.setText(str(self.freq_slider.value()))
 
     def update_freq_slider(self):
@@ -93,6 +112,7 @@ class MainWindow(QMainWindow):
         file_dialog.setFileMode(QFileDialog.AnyFile)
         if file_dialog.exec_():
             file_path = file_dialog.selectedFiles()[0]
+            self.file_display.setText(file_path)
             print(f"File chosen: {file_path}")
 
 
