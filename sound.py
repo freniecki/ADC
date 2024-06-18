@@ -35,7 +35,7 @@ def record(rate, format_size, length):
                         input=True)
 
         frames = []
-
+        print('recording...')
         for _ in range(0, int(rate/CHUNK * length)):
             data = stream.read(CHUNK)
             frames.append(data)

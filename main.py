@@ -7,13 +7,12 @@ from sound import play, record
 
 
 def play_music(self):
-    print('im in play_music()')
-    print(self.file_path)
+    print('playing: ', self.file_path)
     play(self.file_path)
 
 
 def record_sound(self):
-    record(self.frequency, self.bit_depth, 3)
+    record(self.frequency, self.bit_depth, self.time)
 
 
 class MainWindow(QMainWindow):
@@ -25,6 +24,7 @@ class MainWindow(QMainWindow):
         self.frequency = 44100
         self.bit_depth = 16
         self.file_path = ""
+        self.time = 3
 
         # Górna część okna
         upper_widget = QWidget()
@@ -47,6 +47,23 @@ class MainWindow(QMainWindow):
         freq_layout.addWidget(self.freq_text)
 
         upper_layout.addLayout(freq_layout)
+
+        time_layout = QHBoxLayout()
+        self.time_label = QLabel('Recording Time')
+        self.time_slider = QSlider(Qt.Horizontal)
+        self.time_slider.setMinimum(1)
+        self.time_slider.setMaximum(120)
+        self.time_slider.setValue(self.time)
+        self.time_slider.valueChanged.connect(self.update_time_text)
+        self.time_text = QLineEdit(str(self.time_slider.value()))
+        self.time_text.setFixedWidth(100)
+        self.time_text.editingFinished.connect(self.update_time_slider)
+
+        time_layout.addWidget(self.time_label)
+        time_layout.addWidget(self.time_slider)
+        time_layout.addWidget(self.time_text)
+
+        upper_layout.addLayout(time_layout)
 
         # Wybór opcji dla kwantyzacji
         self.bit_8 = QRadioButton('8-bit')
@@ -108,6 +125,13 @@ class MainWindow(QMainWindow):
 
     def update_freq_slider(self):
         self.freq_slider.setValue(int(self.freq_text.text()))
+
+    def update_time_text(self):
+        self.time = self.time_slider.value()
+        self.time_text.setText(str(self.time_slider.value()))
+
+    def update_time_slider(self):
+        self.time_slider.setValue(int(self.time_text.text()))
 
     def open_file_dialog(self):
         file_dialog = QFileDialog()
