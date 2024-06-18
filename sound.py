@@ -7,7 +7,6 @@ CHUNK = 1024
 def play(file_name):
     with (wave.open(file_name, 'rb')) as wf:
         p = pyaudio.PyAudio()
-        print(file_name)
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                         channels=wf.getnchannels(),
                         rate=wf.getframerate(),
@@ -37,7 +36,7 @@ def record(rate, format_size, length):
 
         frames = []
 
-        for i in range(0, int(rate/CHUNK * length)):
+        for _ in range(0, int(rate/CHUNK * length)):
             data = stream.read(CHUNK)
             frames.append(data)
 

@@ -7,6 +7,8 @@ from sound import play, record
 
 
 def play_music(self):
+    print('im in play_music()')
+    print(self.file_path)
     play(self.file_path)
 
 
@@ -18,9 +20,9 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Analogue-Digital Operator")
+        self.setWindowTitle("Analogue-Digital Converter")
 
-        self.frequency = 40000
+        self.frequency = 44100
         self.bit_depth = 16
         self.file_path = ""
 
@@ -82,7 +84,7 @@ class MainWindow(QMainWindow):
         self.record_button.clicked.connect(lambda: record_sound(self))
 
         self.play_button = QPushButton('Play')
-        self.record_button.clicked.connect(lambda: play_music(self))
+        self.play_button.clicked.connect(lambda: play_music(self))
 
         lower_layout.addWidget(self.record_button)
         lower_layout.addWidget(self.play_button)
@@ -111,9 +113,9 @@ class MainWindow(QMainWindow):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.AnyFile)
         if file_dialog.exec_():
-            file_path = file_dialog.selectedFiles()[0]
-            self.file_display.setText(file_path)
-            print(f"File chosen: {file_path}")
+            self.file_path = file_dialog.selectedFiles()[0]
+            self.file_display.setText(self.file_path)
+            print(f"File chosen: {self.file_path}")
 
 
 if __name__ == '__main__':
