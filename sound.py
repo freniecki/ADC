@@ -8,6 +8,11 @@ CHUNK = 1024
 
 
 def play(file_name):
+    """
+    Format - poziom kwantyzajcji
+    Channels - ilość kanałów
+    Rate -
+    """
     with (wave.open(file_name, 'rb')) as wf:
         p = pyaudio.PyAudio()
         stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
@@ -45,7 +50,6 @@ def record(rate, format_size, length):
             data = stream.read(CHUNK)
             frames.append(data)
 
-        # print(snr(stream))
 
         stream.stop_stream()
         stream.close()
@@ -61,10 +65,17 @@ def record(rate, format_size, length):
         wb.close()
 
         print('file written')
+        print('snr value:')
+        print(snr(b''.join(frames)))
 
 
 def snr(data):
-    data = asanyarray(data)
-    s = data.mean(0)
-    n = data.std()
-    return abs(20 * np.log10(abs(np.where(n == 0, 0, s/n))))
+    data = np.frombuffer(data, dtype=np.int16)
+    signal = np.mean(data**2)
+    noise = np.var(data)
+
+    if noise == 0:
+        return float('inf')
+
+    snr_value = 20 * np.log10(np.sqrt(signal / noise))
+    return abs(snr_value)

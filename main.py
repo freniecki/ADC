@@ -30,6 +30,12 @@ class MainWindow(QMainWindow):
         upper_widget = QWidget()
         upper_layout = QVBoxLayout()
 
+        # authors
+        name_layout = QHBoxLayout()
+        self.name_label = QLabel('@Authors: Shostsik, Reniecki')
+        name_layout.addWidget(self.name_label)
+        upper_layout.addLayout(name_layout)
+
         # Suwak i pole tekstowe do ustawienia częstotliwości
         freq_layout = QHBoxLayout()
         self.freq_label = QLabel('Frequency:')
@@ -73,6 +79,7 @@ class MainWindow(QMainWindow):
         bit_layout = QHBoxLayout()
         bit_layout.addWidget(self.bit_8)
         bit_layout.addWidget(self.bit_16)
+        # 24-bity?
 
         self.bit_group = QButtonGroup()
         self.bit_group.addButton(self.bit_8)
